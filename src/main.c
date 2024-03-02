@@ -137,5 +137,12 @@ main(int argc, char *argv[])
   fclose(stream);
   free(buf);
 
+  // free data structures
+  free(gHistoryTable);
+  free(gPredictTable);
+  free(lPredictTable);
+  free(lHistoryTable);
+  free(choiceTable);
+
   return 0;
 }

@@ -47,6 +47,12 @@ extern int pcIndexBits;  // Number of bits used for PC index
 extern int bpType;       // Branch Prediction Type
 extern int verbose;
 
+extern uint8_t* gHistoryTable;
+extern uint8_t* gPredictTable;
+extern uint8_t* lPredictTable;
+extern uint8_t* lHistoryTable;
+extern uint8_t* choiceTable;
+
 //------------------------------------//
 //    Predictor Function Prototypes   //
 //------------------------------------//

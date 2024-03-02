@@ -36,6 +36,13 @@ int verbose;
 //
 //TODO: Add your own Branch Predictor data structures here
 //
+#define PC_SIZE 32
+
+uint8_t* gHistoryTable;
+uint8_t* gPredictTable;
+uint8_t* lHistoryTable;
+uint8_t* lPredictTable;
+uint8_t* choiceTable;
 
 
 //------------------------------------//
@@ -50,6 +57,26 @@ init_predictor()
   //
   //TODO: Initialize Branch Predictor Data Structures
   //
+  if (bpType == GSHARE) {
+    size_t size = (size_t)(1 << ghistoryBits) / 4;
+    gPredictTable = (uint8_t*)malloc(size);
+    gHistoryTable = (uint8_t*)malloc(ghistoryBits / 8);
+  }
+  else if (bpType == TOURNAMENT) {
+    size_t size = (size_t) (1 << pcIndexBits) / 4;
+    choiceTable = (uint8_t*)malloc(size);
+
+    gHistoryTable = (uint8_t*)malloc(ghistoryBits / 8);
+
+    size = (size_t) (1 << ghistoryBits) / 4;
+    gPredictTable = (uint8_t*)malloc(size);
+
+    size = (size_t) (1 << pcIndexBits) * lhistoryBits / 8;
+    lHistoryTable = (uint8_t*)malloc(size);
+
+    size = (size_t) (1 << lhistoryBits) / 4;
+    lPredictTable = (uint8_t*)malloc(size);
+  }
 }
 
 // Make a prediction for conditional branch instruction at PC 'pc'
@@ -88,4 +115,10 @@ train_predictor(uint32_t pc, uint8_t outcome)
   //
   //TODO: Implement Predictor training
   //
+  // update global history table
+  *gHistoryTable = (*gHistoryTable << 1) | outcome;
+  if (bpType == GSHARE) {
+    // update global prediction table
+    
+  }
 }
