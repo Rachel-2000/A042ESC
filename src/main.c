@@ -116,6 +116,7 @@ main(int argc, char *argv[])
 
     // Make a prediction and compare with actual outcome
     uint8_t prediction = make_prediction(pc);
+    // printf("-----Finish make_prediction-----\n");
     if (prediction != outcome) {
       mispredictions++;
     }
@@ -125,6 +126,7 @@ main(int argc, char *argv[])
 
     // Train the predictor
     train_predictor(pc, outcome);
+    // printf("-----Finish train_predictor-----\n");
   }
 
   // Print out the mispredict statistics
