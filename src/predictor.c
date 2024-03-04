@@ -79,8 +79,11 @@ init_predictor()
     gHistoryTable = (uint8_t*)malloc(ghistoryBits / 8);
   }
   else if (bpType == TOURNAMENT) {
+    // local history(correlated predictor): p1
+    // global history(simple BHT): p2
     size_t size = (size_t) (1 << pcIndexBits) / 4;
     choiceTable = (uint8_t*)malloc(size);
+    init_prediction_table(choiceTable, size); // weakly choose global predictor p2 (01)
 
     gHistoryTable = (uint8_t*)malloc(ghistoryBits / 8);
 
@@ -114,16 +117,20 @@ uint32_t calculate_xor(uint32_t pc, uint32_t history) {
     return result;
 }
 
-uint8_t get_pred_block(uint32_t index) {
+uint8_t get_pred_block(uint32_t index, uint8_t* predictTable, int bits) {
     // Calculate the starting bit position of the 2-bit block
-    uint32_t bit_position = index * 2;
+    // uint32_t bit_position = index * 2;
+    uint32_t bit_position = index * bits;
 
     // Calculate the byte index and the bit offset within the byte
     uint32_t byte_index = bit_position / 8;
     uint32_t bit_offset = bit_position % 8;
 
     // Extract the 2-bit block from the global prediction table
-    uint8_t block = (gPredictTable[byte_index] >> bit_offset) & 0x3;
+    // uint8_t block = (gPredictTable[byte_index] >> bit_offset) & 0x3;
+    // uint8_t block = (predictTable[byte_index] >> bit_offset) & 0x3;
+    uint8_t bitmask = (1 << bits) - 1;
+    uint8_t block = (predictTable[byte_index] >> bit_offset) & bitmask;
     // SN:00 WN:01 WT:10 ST:11
     return block;
 }
@@ -141,13 +148,35 @@ make_prediction(uint32_t pc)
       return TAKEN;
     case GSHARE: {
       uint32_t xor_value = calculate_xor(pc, *gHistoryTable);
-      uint8_t predict = get_pred_block(xor_value);
+      uint8_t predict = get_pred_block(xor_value, gPredictTable, 2);
       // return predict;
       if (predict == 0 || predict == 1) return NOTTAKEN;
       else if (predict == 2 || predict == 3) return TAKEN;
       else break;
     }
-    case TOURNAMENT:
+    case TOURNAMENT: {
+      // get predictor choice
+      uint32_t bitmask = (1 << pcIndexBits) - 1;
+      uint32_t pc_index = pc & bitmask; // index to choice table
+      uint8_t choice = get_pred_block(pc_index, choiceTable, 2);
+
+      // get global predict (the simple BHT)
+      uint8_t gPredict = get_pred_block(*gHistoryTable, gPredictTable, 2);
+
+      // get local predict (correlated history table)
+      uint8_t his_pattern = get_pred_block(pc_index, lHistoryTable, lhistoryBits);
+      uint8_t lPredict = get_pred_block(his_pattern, lPredictTable, 2);
+
+      if (choice == 0 || choice == 1) {
+        if (gPredict == 0 || gPredict == 1) return NOTTAKEN;
+        else if (gPredict == 2 || gPredict == 3) return TAKEN;
+      }
+      else if (choice == 2 || choice == 3) {
+        if (lPredict == 0 || lPredict == 1) return NOTTAKEN;
+        else if (lPredict == 2 || lPredict == 3) return TAKEN;
+      }
+      else break;
+    }
     case CUSTOM:
     default:
       break;
