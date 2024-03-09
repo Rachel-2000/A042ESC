@@ -197,8 +197,6 @@ train_predictor(uint32_t pc, uint8_t outcome)
   //TODO: Implement Predictor training
   //
   if (bpType == GSHARE) {
-    // update global history table
-    *gHistoryTable = (*gHistoryTable << 1) | outcome;
     // update global prediction table
     uint32_t xor_index = calculate_xor(pc, *gHistoryTable);
     uint32_t bit_position = xor_index * 2;
@@ -218,5 +216,8 @@ train_predictor(uint32_t pc, uint8_t outcome)
     // Store the updated 2-bit block back into the global prediction table
     gPredictTable[byte_index] &= ~(0x3 << bit_offset); // Clear the 2-bit block
     gPredictTable[byte_index] |= (block << bit_offset); // Set the updated 2-bit block
+    
+    // update global history table
+    *gHistoryTable = (*gHistoryTable << 1) | outcome;
   }
 }
