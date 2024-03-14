@@ -38,6 +38,11 @@ extern const char *bpName[];
 #define WT  2			// predict T, weak taken
 #define ST  3			// predict T, strong taken
 
+// For custom, each entry contains 4 2-bit 
+#define WN4 0x55
+#define PREDSIZE 2
+#define ENTRYSIZE 8
+
 //------------------------------------//
 //      Predictor Configuration       //
 //------------------------------------//
@@ -47,11 +52,11 @@ extern int pcIndexBits;  // Number of bits used for PC index
 extern int bpType;       // Branch Prediction Type
 extern int verbose;
 
-extern uint8_t* gHistoryTable;
-extern uint8_t* gPredictTable;
-extern uint8_t* lPredictTable;
-extern uint8_t* lHistoryTable;
-extern uint8_t* choiceTable;
+// extern uint8_t* gHistoryTable;
+// extern uint8_t* gPredictTable;
+// extern uint8_t* lPredictTable;
+// extern uint8_t* lHistoryTable;
+// extern uint8_t* choiceTable;
 
 //------------------------------------//
 //    Predictor Function Prototypes   //
@@ -72,5 +77,8 @@ uint8_t make_prediction(uint32_t pc);
 // indicates that the branch was not taken)
 //
 void train_predictor(uint32_t pc, uint8_t outcome);
+
+// free up dynamically allocated tables
+void destroy();
 
 #endif
