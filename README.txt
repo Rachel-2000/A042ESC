@@ -15,7 +15,7 @@ Branch prediction is critical to performance in modern processors.  An accurate 
 In this project, our primary focus lies in the exploration of local and global branch prediction schemes, as well as their combination. We have implemented three branch predictors—Gshare, a modified Alpha 21264 Tournament predictor, and a local/Gshare tournament predictor—in C.
 
 #### Results
-Our custom predictor beats the Gshare and modified Alpha tournament predictors in all six traces. To run all three predictors in all six traces, simply run the following commands. 
+Our custom predictor (custom:13:13:10) beats the Gshare 13 and Tournament 9:10:10 in all six traces. The memory usage of our custom:13:13:10 is (64K + 32) bits. To run all three predictors in all six traces, simply run the following commands. 
 
 ```
   chmod +x run.sh
