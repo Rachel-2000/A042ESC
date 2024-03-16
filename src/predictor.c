@@ -154,9 +154,9 @@ uint8_t pred_gshare(uint32_t pc)
   uint32_t pattern = (pc ^ brHistoryReg) & mask;
   uint8_t pred = pHistoryTable[pattern];
 
-  if(verbose){
-    printf("GSHARE: Get pred %u from pht %u, pc: %u, br his: %u\n", pred, pattern, pc, brHistoryReg);
-  }
+  // if(verbose){
+  //   printf("GSHARE: Get pred %u from pht %u, pc: %u, br his: %u\n", pred, pattern, pc, brHistoryReg);
+  // }
   
   if (pred == SN || pred == WN){
     return NOTTAKEN;
@@ -245,9 +245,9 @@ uint8_t pred_tournament(uint32_t pc)
   // get choice
   uint8_t choice = choiceTable[gIndex];
 
-  if(verbose){
-    printf("TOURNAMENT: Local pred %u, global pred %u, choice %u, pc: %u, lHis: %u, gHis: %u\n", lPredict, gPredict, choice, pc, lPattern, gHistory);
-  }
+  // if(verbose){
+  //   printf("TOURNAMENT: Local pred %u, global pred %u, choice %u, pc: %u, lHis: %u, gHis: %u\n", lPredict, gPredict, choice, pc, lPattern, gHistory);
+  // }
   
   if(choice == SN || choice == WN){ // choose global
     return gPredict;
@@ -361,9 +361,9 @@ uint8_t pred_custom(uint32_t pc)
   uint16_t choiceIndex = gHistoryCustom & mask;
   uint8_t choice = pred_retrieve(choiceIndex, choiceTableCustom);
 
-  if(verbose){
-    printf("CUSTOM: Local pred %u, global pred %u, choice %u, pc: %u, lHis: %u, gHis: %u\n", lPredictCustom, gPredictCustom, choice, pc, lPattern, gHistoryCustom);
-  }
+  // if(verbose){
+  //   printf("CUSTOM: Local pred %u, global pred %u, choice %u, pc: %u, lHis: %u, gHis: %u\n", lPredictCustom, gPredictCustom, choice, pc, lPattern, gHistoryCustom);
+  // }
 
   if(choice == SN || choice == WN){ // choose global
     return gPredictCustom;
